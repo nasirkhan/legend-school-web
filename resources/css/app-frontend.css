@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Import Flowbite theme */
+@import "flowbite/src/themes/default";
+
+/* Configure Flowbite source */
+@source "../node_modules/flowbite";
+
+/* Include Laravel Cube package classes for Tailwind class detection */
+@import "../../vendor/nasirkhan/laravel-cube/resources/css/tailwind.css";
+
+/* Import Flowbite plugin */
+@plugin "flowbite/plugin";
+
+/* Dark mode variant configuration for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+/* @import '/node_modules/@fortawesome/fontawesome-free/css/all.min.css'; */
