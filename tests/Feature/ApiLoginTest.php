@@ -57,6 +57,7 @@ class ApiLoginTest extends TestCase
         $this->withToken($token)
             ->getJson('/api/user')
             ->assertOk()
-            ->assertJsonPath('email', $user->email);
+            ->assertJsonPath('data.email', $user->email)
+            ->assertJsonPath('data.can.edit_profile', true);
     }
 }
