@@ -18,6 +18,7 @@
         "intervention/image-laravel": "^1.5",
         "laracasts/flash": "^3.2",
         "laravel/framework": "^13.0",
+        "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.0",
         "laravel/tinker": "^3.0",
         "livewire/livewire": "^4.0",
