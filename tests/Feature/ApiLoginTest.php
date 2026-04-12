@@ -18,7 +18,7 @@ class ApiLoginTest extends TestCase
             'status' => 1,
         ]);
 
-        $response = $this->postJson('/api/login', [
+        $response = $this->postJson('/api/v1/login', [
             'email' => $user->email,
             'password' => 'secret-password',
             'device_name' => 'Nasir Android',
@@ -55,9 +55,34 @@ class ApiLoginTest extends TestCase
         $token = $user->createToken('Test Device')->plainTextToken;
 
         $this->withToken($token)
-            ->getJson('/api/user')
+            ->getJson('/api/v1/users/profile')
             ->assertOk()
             ->assertJsonPath('data.email', $user->email)
             ->assertJsonPath('data.can.edit_profile', true);
+    }
+
+    public function test_token_is_revoked_after_logout(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'logout-user@example.com',
+            'status' => 1,
+        ]);
+
+        $token = $user->createToken('Logout Device')->plainTextToken;
+
+        $this->withToken($token)
+            ->deleteJson('/api/v1/logout')
+            ->assertOk()
+            ->assertJsonPath('message', 'Logged out successfully.');
+
+        $this->assertCount(0, $user->fresh()->tokens);
+
+        // Flush the in-process auth state so the revoked token is re-evaluated.
+        $this->app->make('auth')->forgetGuards();
+
+        // Revoked token can no longer access protected routes.
+        $this->withToken($token)
+            ->getJson('/api/v1/users/profile')
+            ->assertUnauthorized();
     }
 }

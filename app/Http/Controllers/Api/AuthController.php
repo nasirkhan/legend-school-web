@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -47,5 +48,15 @@ class AuthController extends Controller
                 'email_verified_at' => $user->email_verified_at,
             ],
         ]);
+    }
+
+    /**
+     * Revoke the current access token (logout for mobile clients).
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out successfully.']);
     }
 }

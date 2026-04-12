@@ -23,7 +23,7 @@ class ApiUserProfileTest extends TestCase
         $token = $user->createToken('iPhone')->plainTextToken;
 
         $this->withToken($token)
-            ->getJson('/api/users/profile')
+            ->getJson('/api/v1/users/profile')
             ->assertOk()
             ->assertJsonPath('data.username', 'profile-owner')
             ->assertJsonPath('data.social_profiles.website_url', 'https://example.com')
@@ -45,7 +45,7 @@ class ApiUserProfileTest extends TestCase
         $token = $viewer->createToken('Android')->plainTextToken;
 
         $this->withToken($token)
-            ->getJson('/api/users/profile/'.$profileOwner->username)
+            ->getJson('/api/v1/users/profile/'.$profileOwner->username)
             ->assertOk()
             ->assertJsonPath('data.username', 'target-user')
             ->assertJsonMissingPath('data.providers')
@@ -64,7 +64,7 @@ class ApiUserProfileTest extends TestCase
         $token = $user->createToken('Pixel')->plainTextToken;
 
         $response = $this->withToken($token)
-            ->patchJson('/api/users/profile', [
+            ->patchJson('/api/v1/users/profile', [
                 'first_name' => 'Nasir',
                 'last_name' => 'Khan',
                 'mobile' => '01700000000',
