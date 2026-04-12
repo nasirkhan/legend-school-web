@@ -87,6 +87,7 @@ class ApiUserProfileTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
+            'name' => 'Nasir Khan',
             'first_name' => 'Nasir',
             'last_name' => 'Khan',
             'mobile' => '01700000000',

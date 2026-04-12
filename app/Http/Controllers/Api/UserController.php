@@ -35,14 +35,21 @@ class UserController extends Controller
 
         $data = $request->safe()->except(['avatar']);
 
+        // Keep the name column in sync with first_name / last_name.
+        $firstName = $data['first_name'] ?? $user->first_name;
+        $lastName = $data['last_name'] ?? $user->last_name;
+        $data['name'] = trim($firstName.' '.$lastName);
+
         $user->update($data);
 
         if ($request->hasFile('avatar')) {
-            if ($user->getMedia('users')->first()) {
-                $user->getMedia('users')->first()->delete();
+            $existingMedia = $user->getMedia('users')->first();
+
+            if ($existingMedia) {
+                $existingMedia->delete();
             }
 
-            $media = $user->addMedia($request->file('avatar')->getRealPath())
+            $media = $user->addMedia($request->file('avatar'))
                 ->toMediaCollection('users');
 
             $user->update(['avatar' => $media->getUrl()]);
