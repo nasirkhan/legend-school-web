@@ -21,13 +21,13 @@ class UserLoginSuccess
     /**
      * Login Success Event Construct.
      */
-    public function __construct(Request $request, User $user)
+    public function __construct(?Request $request, User $user)
     {
         $this->user = $user;
-        $this->request = $this->prepareRequestData($request);
+        $this->request = $request ? $this->prepareRequestData($request) : [];
     }
 
-    public function prepareRequestData($request)
+    public function prepareRequestData(Request $request): array
     {
         $data = $request->except(['password', 'password_confirmation']);
 
