@@ -3,6 +3,7 @@
 namespace Modules\Task\Providers;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Finder\Finder;
 
@@ -20,8 +21,6 @@ class TaskServiceProvider extends ServiceProvider
 
     /**
      * Boot the application events.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -29,7 +28,10 @@ class TaskServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadRoutesFrom(base_path('Modules/Task/routes/web.php'));
-        $this->loadRoutesFrom(base_path('Modules/Task/routes/api.php'));
+
+        Route::middleware('api')
+            ->prefix('api')
+            ->group(base_path('Modules/Task/routes/api.php'));
         $this->loadMigrationsFrom(base_path('Modules/Task/database/migrations'));
 
         // register commands
@@ -38,8 +40,6 @@ class TaskServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -87,7 +87,7 @@ class TaskServiceProvider extends ServiceProvider
      */
     public function registerTranslations()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'task');
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'task');
     }
 
     /**
@@ -124,7 +124,7 @@ class TaskServiceProvider extends ServiceProvider
             return;
         }
 
-        $finder = new Finder(); // from Symfony\Component\Finder;
+        $finder = new Finder; // from Symfony\Component\Finder;
         $finder->files()->name('*.php')->in($consolePath);
 
         $classes = [];

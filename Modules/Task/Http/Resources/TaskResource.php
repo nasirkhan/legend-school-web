@@ -49,7 +49,7 @@ class TaskResource extends JsonResource
                 'email' => $this->completer?->email,
             ]),
             'can' => [
-                'edit' => $user?->can('edit_tasks') ?? false,
+                'edit' => $this->canBeEditedBy($user),
                 'complete' => $user && (
                     $user->can('edit_tasks')
                     ||

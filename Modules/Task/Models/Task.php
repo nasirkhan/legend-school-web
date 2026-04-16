@@ -2,14 +2,16 @@
 
 namespace Modules\Task\Models;
 
-use App\Models\Role;
 use App\Models\BaseModel;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Task\database\factories\TaskFactory;
 
 class Task extends BaseModel
 {
@@ -86,6 +88,15 @@ class Task extends BaseModel
         return $query->where('status', 'completed');
     }
 
+    public function canBeEditedBy(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $user->can('edit_tasks') || (int) $this->created_by === (int) $user->id;
+    }
+
     public function markCompleted(?User $user = null): void
     {
         $this->forceFill([
@@ -107,10 +118,10 @@ class Task extends BaseModel
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     protected static function newFactory()
     {
-        return \Modules\Task\database\factories\TaskFactory::new();
+        return TaskFactory::new();
     }
 }

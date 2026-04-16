@@ -4,6 +4,8 @@ namespace Modules\Task\Http\Controllers\Api;
 
 use App\ApiAuthorizable;
 use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -18,15 +20,45 @@ class TaskController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $perPage = min(max($request->integer('per_page', 50), 1), 100);
+
         $tasks = Task::query()
             ->with(['creator', 'primaryAssignee', 'assignedRole', 'coAssignees', 'completer'])
             ->visibleTo($request->user()->loadMissing('roles'))
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->toString()))
             ->orderByRaw("case when status = 'pending' then 0 else 1 end")
             ->orderBy('due_at')
-            ->paginate(15);
+            ->paginate($perPage);
 
         return TaskResource::collection($tasks);
+    }
+
+    public function options(Request $request): JsonResponse
+    {
+        abort_unless($request->user()?->can('add_tasks') || $request->user()?->can('edit_tasks'), 403);
+
+        return response()->json([
+            'data' => [
+                'users' => User::query()
+                    ->where('status', 1)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'email'])
+                    ->map(fn ($user) => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ])
+                    ->values(),
+                'roles' => Role::query()
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
+                    ->map(fn ($role) => [
+                        'id' => $role->id,
+                        'name' => ucfirst($role->name),
+                    ])
+                    ->values(),
+            ],
+        ]);
     }
 
     public function store(StoreTaskRequest $request): JsonResponse

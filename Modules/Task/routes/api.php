@@ -8,6 +8,7 @@ Route::prefix('v1')
     ->name('api.v1.tasks.')
     ->group(function () {
         Route::get('/tasks', [TaskController::class, 'index'])->name('index');
+        Route::get('/tasks/options', [TaskController::class, 'options'])->name('options');
         Route::post('/tasks', [TaskController::class, 'store'])->name('store');
         Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('show');
         Route::match(['put', 'patch'], '/tasks/{task}', [TaskController::class, 'update'])->name('update');

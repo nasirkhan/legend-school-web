@@ -6,6 +6,12 @@ class UpdateTaskRequest extends TaskRequest
 {
     public function authorize(): bool
     {
-        return $this->canEditTasks();
+        $task = $this->route('task');
+
+        if (! $task) {
+            return false;
+        }
+
+        return $task->canBeEditedBy($this->user());
     }
 }
