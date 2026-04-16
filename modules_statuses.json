@@ -6,5 +6,6 @@
     "Menu": true,
     "Post": true,
     "Settings": true,
-    "Tag": true
+    "Tag": true,
+    "Task": true
 }

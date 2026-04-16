@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\ApiAuthorizable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UpdateProfileRequest;
 use App\Http\Resources\Api\UserProfileResource;
@@ -11,6 +12,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserController extends Controller
 {
+    use ApiAuthorizable;
+
+    public function __construct()
+    {
+        $this->setApiAbilities([
+            'show' => null,
+            'update' => null,
+        ]);
+    }
+
     /**
      * Show the authenticated user's profile or another user's profile by username.
      */

@@ -33,6 +33,12 @@ class Permission extends \Spatie\Permission\Models\Permission
             'create_backups',
             'download_backups',
             'delete_backups',
+
+            'view_tasks',
+            'add_tasks',
+            'edit_tasks',
+            'delete_tasks',
+            'restore_tasks',
         ];
     }
 

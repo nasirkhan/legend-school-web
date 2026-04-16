@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\ApiAuthorizable;
 use App\Events\Auth\UserLoginSuccess;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\LoginRequest;
@@ -13,6 +14,16 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    use ApiAuthorizable;
+
+    public function __construct()
+    {
+        $this->setApiAbilities([
+            'login' => null,
+            'logout' => null,
+        ]);
+    }
+
     /**
      * Exchange user credentials for a Sanctum token for mobile clients.
      */

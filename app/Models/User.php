@@ -6,6 +6,7 @@ use App\Models\Presenters\UserPresenter;
 use App\Models\Traits\HasHashedMediaTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -71,6 +72,22 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function providers(): HasMany
     {
         return $this->hasMany(UserProvider::class);
+    }
+
+    public function createdTasks(): HasMany
+    {
+        return $this->hasMany(\Modules\Task\Models\Task::class, 'created_by');
+    }
+
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(\Modules\Task\Models\Task::class, 'primary_assignee_id');
+    }
+
+    public function coAssignedTasks(): BelongsToMany
+    {
+        return $this->belongsToMany(\Modules\Task\Models\Task::class, 'task_co_assignees')
+            ->withTimestamps();
     }
 
     /**
